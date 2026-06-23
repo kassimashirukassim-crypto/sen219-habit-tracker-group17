@@ -1,4 +1,4 @@
-# SEN 219: Open Source Software Development
+# LCU-SEN 219: Open Source Software Development and applications 
 ## Project Title: Student Daily Habit Tracker & Productivity App
 **Group Number:** Group 17  
 **Project Type:** Desktop Utility (Python / CustomTkinter)  
