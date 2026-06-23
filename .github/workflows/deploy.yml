@@ -5,48 +5,48 @@ on:
       - main
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  contents: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code Base
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: Setup Java Environment
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: Setup Flutter SDK Framework
+      - name: Install Flutter Framework
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
-      - name: Enable Web Platform Configurations
+      - name: Initialize Project Structure
+        run: |
+          mkdir -p lib web
+          if [ -f main.dart ]; then
+            mv main.dart lib/main.dart
+          fi
+          
+          cat << 'EOF' > web/index.html
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <base href="$FLUTTER_BASE_HREF">
+            <meta charset="UTF-8">
+            <title>Group 17 Habit Tracker</title>
+          </head>
+          <body>
+            <script src="flutter_bootstrap.js" async></script>
+          </body>
+          </html>
+          EOF
+
+      - name: Build Web Target
         run: |
           flutter config --enable-web
-          flutter create . --platforms=web
+          flutter pub get
+          flutter build web --base-href "/${{ github.event.repository.name }}/"
 
-      - name: Compile Application to Web Source
-        run: flutter build web --release --base-href /${{ github.event.repository.name }}/
-
-      - name: Setup GitHub Pages Framework
-        uses: actions/configure-pages@v4
-
-      - name: Upload Web Artifact Assets
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy Web Production Files
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: build/web
-
-      - name: Deploy Live to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          folder: build/web
+          branch: gh-pages
