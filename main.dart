@@ -38,6 +38,7 @@ class _MobileTrackerHomeState extends State<MobileTrackerHome> {
 
   final List<String> _weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   final TextEditingController _inputController = TextEditingController();
+  final TextEditingController _editController = TextEditingController();
 
   double _getWeeklyScore() {
     int totalSlots = _studentHabits.length * 7;
@@ -46,6 +47,42 @@ class _MobileTrackerHomeState extends State<MobileTrackerHome> {
       itemsCompleted += checkedList.where((element) => element == true).length;
     });
     return totalSlots > 0 ? (itemsCompleted / totalSlots) * 100 : 0.0;
+  }
+
+  void _showEditDialog(String oldName) {
+    _editController.text = oldName;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Edit Habit Name"),
+          content: TextField(
+            controller: _editController,
+            decoration: const InputDecoration(labelText: "Habit Name"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                String newName = _editController.text.trim();
+                if (newName.isNotEmpty && newName != oldName) {
+                  setState(() {
+                    // Copy the history over to the renamed habit
+                    _studentHabits[newName] = _studentHabits[oldName]!;
+                    _studentHabits.remove(oldName);
+                  });
+                }
+                Navigator.pop(context);
+              },
+              child: const Text("Save", style: TextStyle(color: Colors.teal)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -76,17 +113,41 @@ class _MobileTrackerHomeState extends State<MobileTrackerHome> {
             const SizedBox(height: 15),
             Expanded(
               child: ListView(
-                children: _studentHabits.keys.map((String habitName) {
+                children: _studentHabits.keys.toList().map((String habitName) {
                   return Card(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+                      key: ValueKey(habitName),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 6.0),
-                            key: ValueKey(habitName),
-                            child: Text(habitName, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 6.0),
+                                  child: Text(habitName, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit, size: 18, color: Colors.grey),
+                                    onPressed: () => _showEditDialog(habitName),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete, size: 18, color: Colors.redAccent),
+                                    onPressed: () {
+                                      setState(() {
+                                        _studentHabits.remove(habitName);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8),
                           Row(
