@@ -1,0 +1,52 @@
+name: Deploy Flutter Web App
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Base
+        uses: actions/checkout@v4
+
+      - name: Setup Java Environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter SDK Framework
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Enable Web Platform Configurations
+        run: |
+          flutter config --enable-web
+          flutter create . --platforms=web
+
+      - name: Compile Application to Web Source
+        run: flutter build web --release --base-href /${{ github.event.repository.name }}/
+
+      - name: Setup GitHub Pages Framework
+        uses: actions/configure-pages@v4
+
+      - name: Upload Web Artifact Assets
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+      - name: Deploy Live to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
