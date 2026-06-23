@@ -79,27 +79,38 @@ class _MobileTrackerHomeState extends State<MobileTrackerHome> {
                 children: _studentHabits.keys.map((String habitName) {
                   return Card(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 14.0),
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(habitName, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 6.0),
+                            key: ValueKey(habitName),
+                            child: Text(habitName, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          ),
                           const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(7, (index) {
-                              return Column(
-                                children: [
-                                  Text(_weekDays[index], style: const TextStyle(fontSize: 10, color: Colors.grey)),
-                                  Checkbox(
-                                    value: _studentHabits[habitName]![index],
-                                    onChanged: (bool? newValue) {
-                                      setState(() {
-                                        _studentHabits[habitName]![index] = newValue ?? false;
-                                      });
-                                    },
-                                  ),
-                                ],
+                              return Expanded(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(_weekDays[index], style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                    const SizedBox(height: 2),
+                                    Transform.scale(
+                                      scale: 0.85,
+                                      child: Checkbox(
+                                        value: _studentHabits[habitName]![index],
+                                        onChanged: (bool? newValue) {
+                                          setState(() {
+                                            _studentHabits[habitName]![index] = newValue ?? false;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               );
                             }),
                           )
