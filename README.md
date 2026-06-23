@@ -23,8 +23,19 @@ This is an open-source productivity tool tailored for university students to tra
 * Custom habit additions dynamically via the interface.
 * Automated real-time efficiency metrics scoring.
 
-### How to Run Locally
-1. Clone this repository to your local machine.
-2. Install the lightweight visual framework:
+---
+
+### 🚀 Dual-Mode Evaluation (How to Grade Our Project)
+Depending on your preferred grading workflow, this application can be evaluated in two distinct ways:
+
+#### 🌐 Option 1: Live Interactive Web UI (Recommended)
+Our application has been compiled and deployed to the cloud via GitHub Actions. You can interact with the mobile-responsive Flutter user interface directly in your desktop or mobile browser without downloading any files.
+👉 **[Click Here to Open the Live Habit Tracker](https://kassimashirukassim-crypto.github.io/sen219-habit-tracker-group17/)**
+
+#### 💻 Option 2: Local Terminal Application (`app.py`)
+If you prefer evaluating local source code executions, a full, interactive command-line interface version of the tracker is built right into the Python file. 
+1. Clone or download this repository to your local machine.
+2. Open your terminal or Command Prompt (CMD) inside the project folder directory.
+3. Run the script using:
    ```bash
-   pip install customtkinter
+   python app.py
