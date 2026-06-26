@@ -1,1 +1,2 @@
-streamlit
+# No external dependencies required! 
+# Python's native tkinter library is used for the desktop GUI.
